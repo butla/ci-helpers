@@ -1,2 +1,5 @@
-# ci-helpers
-Scripts for Continuous Delivery on SnapCI
+ci-helpers
+==========
+
+Scripts for Continuous Delivery on SnapCI.
+
