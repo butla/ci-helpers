@@ -15,7 +15,7 @@ if [ $((COMMIT_COUNT)) -le 1 ]; then
 fi
 
 PREVIOUS_COMMIT_FILES=$(git ls-tree -r --name-only HEAD~1)
-if ! echo -e $PREVIOUS_COMMIT_FILES | grep setup.py; then
+if ! echo -e $PREVIOUS_COMMIT_FILES | grep setup.py > /dev/null; then
     exit 0
 fi
 
