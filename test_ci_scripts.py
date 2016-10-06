@@ -42,13 +42,66 @@ def test_get_commit_action_for_invalid_commit(repo):
         _get_commit_action()
 
 
-def _create_commit(message):
-    file_name = str(uuid.uuid4())
-    subprocess.check_call(['touch', file_name])
+def _create_commit(message, with_file=None):
+    if with_file is None:
+        file_name = str(uuid.uuid4())
+        subprocess.check_call(['touch', file_name])
+    else:
+        file_name = with_file
     subprocess.check_call(['git', 'add', file_name])
-    subprocess.check_call(['git', 'commit', '-am', message])
+    subprocess.check_call(['git', 'commit', '-m', message])
 
 
 def _get_commit_action():
     return subprocess.check_output('../get_commit_action.sh')
+
+
+def test_detect_version_changed(repo):
+    _commit_setup_py('0.0.1')
+    _commit_setup_py('0.0.2')
+
+    assert _check_version_changed()
+
+
+def test_detect_nothing_when_version_not_changed(repo):
+    _commit_setup_py()
+    _create_commit('docs(bla): bla2')
+    
+    assert not _check_version_changed()
+
+
+def test_detect_version_changed_single_commit(repo):
+    assert _check_version_changed()
+
+
+def test_previous_commit_without_setup(repo):
+    _commit_setup_py()
+    assert _check_version_changed()
+
+
+def _check_version_changed():
+    try:
+        subprocess.check_call('../check_version_changed.sh')
+        return True
+    except subprocess.CalledProcessError as ex:
+        if ex.returncode == 1:
+            print('sraka')
+            return False
+        else:
+            raise
+
+
+def _commit_setup_py(version='0.0.1'):
+    setup_content = """
+from setuptools import setup
+
+setup(
+    name='blbla'
+    version={version}
+)
+"""
+    setup_filename = 'setup.py'
+    with open(setup_filename, 'w') as setup_file:
+        setup_file.write(setup_content.format(version=version))
+    _create_commit('fix(bla): Blah, blah', setup_filename)
 
