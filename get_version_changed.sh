@@ -4,9 +4,6 @@
 # (either as parameter of "setup" function or as an independent variable)
 # has been changed in the last commit, when the previous commit doesn't contain setup.py
 # or when there's only one commit.
-#
-# This won't tell if the version was changed properly (feat commits should increment minor,
-# not patch version number), but can identify when the programmer skipped version bumping.
 set -e
 
 COMMIT_COUNT=$(git rev-list --count HEAD)
