@@ -31,6 +31,11 @@ def test_version_should_not_change_but_did(repo):
     assert not _check_version_changed_accordingly()
 
 
+def test_version_change_for_malformed_commit_message(repo):
+    create_commit('blablabla')
+    assert not _check_version_changed_accordingly()
+
+
 def _check_version_changed_accordingly():
     try:
         subprocess.check_call('../check_version_changed_accordingly.sh')
